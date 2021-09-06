@@ -13,6 +13,7 @@ class User extends CI_Controller
     {
         $data['title'] = 'Profil Saya';
         $data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
+        $data['notifikasi'] = $this->notifikasi();
 
         $this->load->view('templates/header', $data);
         $this->load->view('templates/sidebar', $data);
@@ -20,16 +21,77 @@ class User extends CI_Controller
         $this->load->view('user/index', $data);
         $this->load->view('templates/footer');
     }
-    public function datalaundry()
+
+    public function notifikasi()
     {
-        $data['title'] = 'View Laundry';
-        $data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
-        $data['datalaundry'] = $this->db->get('data_laundry')->result_array();
+        $this->load->model('laundry_model');
+        $user = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
+
+        $cekLaundrySelesai = $this->laundry_model->laundry_selesai($user['id']);
+        $jumlahSelesai = count($cekLaundrySelesai);
+
+        $cekBelumLunas = $this->laundry_model->laundry_belum_lunas($user['id']);
+        $jumlahBelumLunas = count($cekBelumLunas);
+
+        if ($jumlahSelesai > 0 && $jumlahBelumLunas > 0) {
+            return "<div style='padding:15px;margin-bottom:20px;border:1px solid transparent;border-radius:4px' class='alert-warning'>
+            Anda memiliki " . $jumlahBelumLunas . " laundry yang belum dibayar dan " . $jumlahSelesai . " laundry yang belum diambil.
+            </div>
+            ";
+        } else if ($jumlahBelumLunas > 0) {
+            return "<div style='padding:15px;margin-bottom:20px;border:1px solid transparent;border-radius:4px' class='alert-danger'>
+            Anda memiliki " . $jumlahBelumLunas . " laundry yang belum dibayar.
+            </div>
+            ";
+        } else if ($jumlahSelesai > 0) {
+            return "<div style='padding:15px;margin-bottom:20px;border:1px solid transparent;border-radius:4px' class='alert-info'>
+                            Anda memiliki " . $jumlahSelesai . " laundry yang belum diambil.
+                            </div>
+            ";
+        }
+    }
+
+    public function datalaundry($id = NULL)
+    {
+        $this->load->model('laundry_model');
+
+        $user = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
+        $data['user'] = $user;
+
+        if (is_null($id)) {
+            $data['title'] = 'Data Laundry';
+            $data['datalaundry'] = $this->laundry_model->ambil_laundry_user($user['id']);
+
+            $this->load->view('templates/header', $data);
+            $this->load->view('templates/sidebar', $data);
+            $this->load->view('templates/topbar', $data);
+            $this->load->view('user/datalaundry', $data);
+            $this->load->view('templates/footer');
+        } else {
+            $data['title'] = 'Detail Laundry';
+            $data['datalaundry'] = $this->laundry_model->ambil_satu_laundry($id);
+            $this->load->view('templates/header', $data);
+            $this->load->view('templates/sidebar', $data);
+            $this->load->view('templates/topbar', $data);
+            $this->load->view('user/detaillaundry', $data);
+            $this->load->view('templates/footer');
+        }
+    }
+
+    public function invoice()
+    {
+        $this->load->model('laundry_model');
+
+        $id = $this->input->post('id_laundry');
+
+        if (is_null($id)) {
+            redirect('admin/laundry/');
+        }
+
+        $data['title'] = "Invoice";
+        $data['datalaundry'] = $this->laundry_model->ambil_satu_laundry($id);
         $this->load->view('templates/header', $data);
-        $this->load->view('templates/sidebar', $data);
-        $this->load->view('templates/topbar', $data);
-        $this->load->view('user/datalaundry', $data);
-        $this->load->view('templates/footer');
+        $this->load->view('invoice', $data);
     }
 
 
@@ -154,7 +216,8 @@ class User extends CI_Controller
         $this->load->view('templates/footer');
     }
 
-    public function tambahPesan() {
+    public function tambahPesan()
+    {
         $this->load->model('pesan_model');
         $user =
             $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
@@ -169,18 +232,19 @@ class User extends CI_Controller
 
         if ($proses) {
             $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">Berhasil menambahkan pesan!</div>');
-        }else {
+        } else {
             $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">Gagal menambahkan pesan!</div>');
         }
 
         redirect('admin/pesan');
     }
 
-    public function detailPesan() {
+    public function detailPesan()
+    {
         $this->load->model('pesan_model');
         $user =
             $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
-        
+
         $id = $this->uri->segment('3');
 
         $data = [
@@ -197,7 +261,8 @@ class User extends CI_Controller
         $this->load->view('templates/footer');
     }
 
-    public function balasPesan() {
+    public function balasPesan()
+    {
         $this->load->model('pesan_model');
         $user =
             $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
@@ -219,7 +284,8 @@ class User extends CI_Controller
         redirect('user/detailPesan/' . $this->input->post('pesan_id'));
     }
 
-    public function tutupPesan() {
+    public function tutupPesan()
+    {
         $this->load->model('pesan_model');
         $data = [
             'status' => 'Selesai'

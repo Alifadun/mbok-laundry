@@ -7,6 +7,9 @@
     <?= $this->session->flashdata('message'); ?>
 
     <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <a href="<?= base_url('admin/catatlaundry') ?>" class="btn btn-primary">Tambah Data</a>
+        </div>
         <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-bordered" id="tabel-data-laundry" width="100%" cellspacing="0">
@@ -50,7 +53,7 @@
                                     ?>
                                 </td>
                                 <td>
-                                    <a href="<?= base_url('user/datalaundry/') . $dl['id'] ?>" class="btn btn-dark"><i class="fas fa-fw fa-info"></i> Detil</a>
+                                    <a href="<?= base_url('admin/laundry/') . $dl['id'] ?>" class="btn btn-dark"><i class="fas fa-fw fa-info"></i> Detil</a>
                                 </td>
                             </tr>
                             <?php $i++; ?>
