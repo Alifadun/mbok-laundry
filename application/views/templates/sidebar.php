@@ -26,47 +26,28 @@
         </li>
 
         <li class="nav-item">
-            <a class="nav-link" href="<?= base_url('admin/catatlaundry'); ?>">
-                <i class="fas fa-fw fa-pen"></i>
-                <span>Catatan Laundry</span></a>
+            <a class="nav-link" href="<?= base_url('admin/laundry'); ?>">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Laundry</span></a>
         </li>
 
         <li class="nav-item">
             <a class="nav-link" href="<?= base_url('admin/pesan'); ?>">
                 <i class="fas fa-envelope-square"></i>
-                <span>tambahPesan</span></a>
+                <span>Kelola Pesan</span></a>
         </li>
-
-        <!-- <li class="nav-item">
-        <a class="nav-link" href="<?= base_url('admin/hargalaundry'); ?>">
-            <i class="fas fa-fw fa-clipboard"></i>
-            <span>Harga laundry</span></a>
-    </li> -->
     <?php else : ?>
+        <li class="nav-item">
+            <a class="nav-link" href="<?= base_url('user/pesan'); ?>">
+                <i class="fas fa-envelope-square"></i>
+                <span>Pesan</span></a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="<?= base_url('user/datalaundry'); ?>">
+                <i class="fas fa-fw fa-book-open"></i>
+                <span>Data laundry</span></a>
+        </li>
     <?php endif; ?>
-    
-    
-    <li class="nav-item">
-        <a class="nav-link" href="<?= base_url('user'); ?>">
-            <i class="fas fa-fw fa-user-edit"></i>
-            <span>Profil saya</span></a>
-    </li>
-
-    <li class="nav-item">
-        <a class="nav-link" href="<?= base_url('user/datalaundry'); ?>">
-            <i class="fas fa-fw fa-book-open"></i>
-            <span>Data laundry</span></a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="<?= base_url('user/changepassword'); ?>">
-            <i class="fas fa-fw fa-key"></i>
-            <span>Change password</span></a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="<?= base_url('user/pesan'); ?>">
-            <i class="fas fa-envelope-square"></i>
-            <span>tambahPesan</span></a>
-    </li>
 
     <li class="nav-item">
         <a class="nav-link" href="<?= base_url('auth/logout'); ?>">
